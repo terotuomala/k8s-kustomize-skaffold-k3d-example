@@ -43,3 +43,5 @@ tasks:
     desc: Delete images that are built by Skaffold and stored on the local Docker daemon
     cmds:
       - docker rmi -f $(docker images example-app -q)
+  
+  default: task -l

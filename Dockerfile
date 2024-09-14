@@ -1,4 +1,5 @@
-FROM node:20-slim as build
+# syntax=docker/dockerfile:1
+FROM node:lts-slim AS build
 
 # Change working directory
 WORKDIR /app
@@ -8,20 +9,20 @@ COPY src ./src
 RUN npm i -g nodemon
 
 
-FROM node:20-slim as release
+FROM node:lts-slim AS release
 
 # Switch to non-root user uid=1000(node)
 USER node
 
 # Set node loglevel
-ENV NPM_CONFIG_LOGLEVEL warn
+ENV NPM_CONFIG_LOGLEVEL=warn
 
 # Change working directory
 WORKDIR /home/node
 
 # Copy app directory from build stage
-COPY --chown=node:node --from=build /app .
-COPY --chown=node:node --from=build /usr/local/lib/node_modules/nodemon .npm-global/bin/nodemon
+COPY --link --chown=1000 --from=build /app .
+COPY --link --chown=1000 --from=build /usr/local/lib/node_modules/nodemon .npm-global/bin/nodemon
 
 EXPOSE 3000
 
